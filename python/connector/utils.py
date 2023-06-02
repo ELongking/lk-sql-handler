@@ -1,3 +1,6 @@
+from fuzzywuzzy import fuzz
+
+
 def set_default_item(item: dict):
     res = "null"
     isnull = item["isnull"]
@@ -12,16 +15,14 @@ def set_default_item(item: dict):
             res = "<add>"
 
     if default:
-        res = default
+        if isnull == "YES":
+            res = default
+        else:
+            res = "None"
 
     return res
 
-# def check_data_format(data, t: str):
-#     if t in ["int", "float"]:
-#         if data == "inf" or "-inf":
-#             return False
-#         try:
-#             ret = float(data)
-#             return True
-#         except:
-#             return False
+
+def item_search(inp: str, data: str) -> int:
+    score = fuzz.partial_token_set_ratio(inp, data)
+    return score

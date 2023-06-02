@@ -36,7 +36,7 @@ class SqlConn:
     def get_info(self, db, tb) -> dict:
         items = ["field", "type", "isnull", "key", "default", "extra"]
         info = dict()
-        sql = "SHOW COLUMNS FROM {}.{}".format(db, tb)
+        sql = "SHOW COLUMNS FROM `{}`.`{}`".format(db, tb)
         resp = self.cursor.execute(sql)
         res = self.cursor.fetchall()
 

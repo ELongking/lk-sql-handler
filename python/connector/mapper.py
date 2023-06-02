@@ -5,18 +5,22 @@ from datetime import datetime as dt
 import os
 
 now_time = dt.now()
-os.makedirs("./logs")
+os.makedirs("./logs", exist_ok=True)
 logger.add(f"./logs/sql-{now_time.strftime('%Y%m%d')}.log", rotation="1 day", retention="15 days")
 logger.info("-" * 25 + " Start " + "-" * 25)
 logger.info("-" * 13 + f" OpenTime: {now_time.strftime('%Y-%m-%d %H:%M:%S')} " + "-" * 13)
 
 
-def check_data(data: str, label: str, info: dict):
-    pass
+def trans_error(e: MySQLError):
+    e = str(e)
+    e = e[1:-1]
+    error_part = e.split(",")
+    code, msg = error_part[0], ",".join(error_part[1:])
+    return code, msg
 
 
 def alter_insert_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, now_idx: int, now_label: str):
-    sql = f"ALTER TABLE {db}.{tb} ADD `col-{now_idx + 1}` varchar(10) AFTER `{now_label}`"
+    sql = f"ALTER TABLE `{db}`.`{tb}` ADD `col-{now_idx + 1}` varchar(10) AFTER `{now_label}`"
     logger.info(f"sql sentence => {sql}")
     try:
         cursor.execute(sql)
@@ -24,37 +28,45 @@ def alter_insert_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: 
         return True, ""
     except MySQLError as e:
         logger.error(e)
-        return False, str(e)
+        return False, trans_error(e)[1]
 
 
 def alter_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, data: list, mode: str):
     field, new_data = data
     sql = ""
     if mode == "field":
-        sql = f"ALTER TABLE {db}.{tb} CHANGE `{field}` {new_data}"
+        sql = f"ALTER TABLE `{db}`.`{tb}` CHANGE `{field}` {new_data}"
     elif mode == "type":
-        sql = f"ALTER TABLE {db}.{tb} MODIFY COLUMN `{field}` {new_data}"
+        sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` {new_data}"
     elif mode == "isnull":
-        if new_data == "YES":
-            sql = f"ALTER TABLE {db}.{tb} MODIFY COLUMN `{field}` NULL"
-        else:
-            sql = f"ALTER TABLE {db}.{tb} MODIFY COLUMN `{field}` NOT NULL"
+        sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` {new_data}"
     elif mode == "key":
-        if new_data == "None":
-            sql = f"ALTER TABLE {db}.{tb} DROP PRIMARY KEY({new_data})"
-        else:
-            sql = f"ALTER TABLE {db}.{tb} ADD PRIMARY KEY({new_data})"
+        sql = f"ALTER TABLE `{db}`.`{tb}` DROP PRIMARY KEY"
+        logger.info(f"sql sentence => {sql}")
+        try:
+            cursor.execute(sql)
+            conn.commit()
+        except MySQLError as e:
+            code, msg = trans_error(e)
+            if code == "1091":
+                pass
+            else:
+                logger.error(e)
+                return False, msg
+
+        sql = f"ALTER TABLE `{db}`.`{tb}` ADD PRIMARY KEY({new_data})"
     elif mode == "default":
         if not new_data:
             new_data = "null"
-        sql = f"ALTER TABLE {db}.{tb} ALTER COLUMN `{field}` SET DEFAULT {new_data}"
+        sql = f"ALTER TABLE `{db}`.`{tb}` ALTER COLUMN `{field}` SET DEFAULT {new_data}"
     elif mode == "extra":
         if new_data == "auto_increment":
-            sql = f"ALTER TABLE {db}.{tb} MODIFY COLUMN `{field}` AUTO_INCREMENT"
+            sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` AUTO_INCREMENT"
         elif new_data == "on update CURRENT_TIMESTAMP":
-            sql = f"ALTER TABLE {db}.{tb} MODIFY COLUMN `{field}` on update CURRENT_TIMESTAMP"
+            sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` on update CURRENT_TIMESTAMP"
         else:
-            sql = f"ALTER TABLE {db}.{tb} MODIFY COLUMN `{field}` {new_data}"
+            sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` {new_data}"
+
     logger.info(f"sql sentence => {sql}")
 
     try:
@@ -63,11 +75,11 @@ def alter_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, da
         return True, ""
     except MySQLError as e:
         logger.error(e)
-        return False, str(e)
+        return False, trans_error(e)[1]
 
 
 def select_all_mode(cursor: ms.connect.cursor, db: str, tb: str):
-    sql = f"SELECT * FROM {db}.{tb}"
+    sql = f"SELECT * FROM `{db}`.`{tb}`"
     logger.info(f"sql sentence => {sql}")
     try:
         cursor.execute(sql)
@@ -75,7 +87,7 @@ def select_all_mode(cursor: ms.connect.cursor, db: str, tb: str):
         return True, res
     except MySQLError as e:
         logger.warning(e)
-        return False, str(e)
+        return False, trans_error(e)[1]
 
 
 def insert_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, pkey: list, data: list):
@@ -87,7 +99,7 @@ def insert_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, p
     field_sql = ", ".join(field)
     value_sql = ", ".join(value)
 
-    sql = f"INSERT INTO {db}.{tb} ({field_sql}) VALUES ({value_sql})"
+    sql = f"INSERT INTO `{db}`.`{tb}` ({field_sql}) VALUES ({value_sql})"
     logger.info(f"sql sentence => {sql}")
     try:
         cursor.execute(sql)
@@ -95,7 +107,7 @@ def insert_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, p
         return True, ""
     except MySQLError as e:
         logger.error(e)
-        return False, str(e)
+        return False, trans_error(e)[1]
 
 
 def update_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, pkey: list, data: list):
@@ -104,7 +116,7 @@ def update_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, p
     value_sql = ", ".join([f"`{name}`={val}" for name, val in zip(data_name, data_val)])
     where_sql = ", ".join([f"`{name}`={val}" for name, val in zip(pkey_name, pkey_val)])
 
-    sql = f"UPDATE {db}.{tb} SET {value_sql} WHERE {where_sql}"
+    sql = f"UPDATE `{db}`.`{tb}` SET {value_sql} WHERE {where_sql}"
     logger.info(f"sql sentence => {sql}")
     try:
         cursor.execute(sql)
@@ -112,14 +124,14 @@ def update_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, p
         return True, ""
     except MySQLError as e:
         logger.error(e)
-        return False, str(e)
+        return False, trans_error(e)[1]
 
 
 def delete_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, pkey: list):
     pkey_name, pkey_val = pkey
     where_sql = ", ".join([f"`{name}`={val}" for name, val in zip(pkey_name, pkey_val)])
 
-    sql = f"DELETE FROM {db}.{tb} WHERE {where_sql}"
+    sql = f"DELETE FROM `{db}`.`{tb}` WHERE {where_sql}"
     logger.info(f"sql sentence => {sql}")
     try:
         cursor.execute(sql)
@@ -127,11 +139,11 @@ def delete_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, p
         return True, ""
     except MySQLError as e:
         logger.error(e)
-        return False, str(e)
+        return False, trans_error(e)[1]
 
 
 def alter_delete_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, field: str):
-    sql = f"ALTER TABLE {db}.{tb} DROP `{field}`"
+    sql = f"ALTER TABLE `{db}`.`{tb}` DROP `{field}`"
     logger.info(f"sql sentence => {sql}")
     try:
         cursor.execute(sql)
@@ -139,4 +151,4 @@ def alter_delete_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: 
         return True, ""
     except MySQLError as e:
         logger.error(e)
-        return False, str(e)
+        return False, trans_error(e)[1]

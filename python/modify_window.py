@@ -1,28 +1,9 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
+
 from connector.init_conn import SqlConn
 from connector.utils import *
+from connector.base_widget import ItemCombo, DataItem, PriCheckGroup, PriCheck
 import connector.type_enum as te
-
-
-class ItemCombo(QtWidgets.QComboBox):
-    def __init__(self, func, index: tuple, items: list, conn=False):
-        super(ItemCombo, self).__init__()
-        self.func = func
-        self.index = index
-        self.addItems(items)
-        if conn:
-            self.conn_enabled()
-        else:
-            self.conn_disabled()
-
-    def conn_enabled(self):
-        self.currentIndexChanged.connect(self.func)
-
-    def conn_disabled(self):
-        try:
-            self.currentIndexChanged.disconnect()
-        except:
-            pass
 
 
 class BaseTable(QtWidgets.QTableView):
@@ -42,11 +23,13 @@ class InfoTable(BaseTable):
         self.parent = parent
 
         self.info = dict()
+        self.pri_group = None
         self.labels = []
 
     def init_table(self, info: dict):
-        type_items = [k for k in te.NAME2TYPE.keys()]
+        type_items = te.TYPE_NAMES
         self.info = info
+        self.pri_group = PriCheckGroup(func=self._inside_check_changed)
         self.labels = [self.info[i]["field"] for i in range(self.info["sum"])]
         labels = list(info[0].keys())
         labels.insert(2, "<length>")
@@ -83,10 +66,13 @@ class InfoTable(BaseTable):
                         ans_box.conn_enabled()
                         self.setIndexWidget(self.tmodel.index(row, 3), ans_box)
                     elif col == 4:
-                        ans_box = ItemCombo(func=self._inside_combo_changed, index=(row, col), items=["None", "PRI"])
-                        ans_box.setCurrentText(value)
-                        ans_box.conn_enabled()
-                        self.setIndexWidget(self.tmodel.index(row, 4), ans_box)
+                        ans_check = PriCheck(row=row, col=col)
+                        if value == "PRI":
+                            ans_check.setCheckState(QtCore.Qt.Checked)
+                        else:
+                            ans_check.setCheckState(QtCore.Qt.Unchecked)
+                        self.pri_group.add_button(ans_check)
+                        self.setIndexWidget(self.tmodel.index(row, 4), ans_check)
                     elif col == 6:
                         ans_box = ItemCombo(func=self._inside_combo_changed,
                                             index=(row, col),
@@ -99,6 +85,7 @@ class InfoTable(BaseTable):
                         item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
                         self.tmodel.setItem(row, col, item)
 
+        self.pri_group.conn_enabled()
         self.tmodel.itemChanged.connect(self._item_changed)
 
     def insert_row(self):
@@ -116,8 +103,8 @@ class InfoTable(BaseTable):
         return now_idx, now_label
 
     def _item_changed(self, item):
-        old_data = item.data()
         row, col = item.row(), item.column()
+        old_data = self.info[row]["field"]
         assert col in [0, 2, 5]
         col2desc = {0: "field", 1: "type", 2: "type", 3: "isnull", 4: "key", 5: "default", 6: "extra"}
         data = [self.labels[row]]
@@ -125,31 +112,76 @@ class InfoTable(BaseTable):
         if col == 2:
             new_data = self.indexWidget(
                 self.tmodel.index(row, 1)).currentText() + f"({self.tmodel.index(row, col).data()})"
+        elif col == 0:
+            new_data = f"`{self.tmodel.index(row, col).data()}`"
+
+            _type = self.indexWidget(self.tmodel.index(row, 1)).currentText()
+            if self.tmodel.index(row, 2).data():
+                _type += f"({self.tmodel.index(row, 2).data()})"
+            new_data += f" {_type}"
+
+            _isnull = self.indexWidget(self.tmodel.index(row, 3)).currentText()
+            print(_isnull)
+            if _isnull == "YES":
+                _isnull = "NULL"
+            else:
+                _isnull = "NOT NULL"
+            new_data += f" {_isnull}"
+
+            _key = self.indexWidget(self.tmodel.index(row, 4)).checkState()
+            if _key == 0:
+                pass
+            else:
+                _key = f"PRIMARY KEY"
+                new_data += f" {_key}"
+
+            _default = self.tmodel.index(row, 5).data()
+            if _default == 'None':
+                pass
+            else:
+                _default = f"DEFAULT {_default}"
+                new_data += f" {_default}"
+
+            _extra = self.indexWidget(self.tmodel.index(row, 6)).currentText()
+            if _extra == "auto_increment":
+                new_data += " AUTO_INCREMENT"
+            elif _extra == "on update CURRENT_TIMESTAMP":
+                new_data += " on update CURRENT_TIMESTAMP"
+            else:
+                pass
+
+            new_data += " FIRST"
         else:
             new_data = self.tmodel.index(row, col).data()
         data.append(new_data)
 
         flag, msg = self.handle.alter(db=self.info["db"], tb=self.info["tb"], data=data, mode=col2desc[col])
         if flag:
-            pass
+            self.parent.fresh_data()
+            self.parent.fresh_widgets()
         else:
-            self.tmodel.itemChanged.disconnect()
-            self.tmodel.setItem(row, col, QtGui.QStandardItem(old_data))
             QtWidgets.QMessageBox.warning(self.parent, "ERROR", msg)
-            self.tmodel.itemChanged.connect(self._item_changed)
+            self.parent.fresh_info()
 
     def _inside_combo_changed(self, index):
         sender = self.sender()
         row, col = sender.index
-        assert col in [1, 3, 4, 6]
+        assert col in [1, 3, 6]
         col2desc = {0: "field", 1: "type", 2: "type", 3: "isnull", 4: "key", 5: "default", 6: "extra"}
         data = [self.labels[row]]
 
-        if col in [3, 4, 6]:
+        if col in [3, 6]:
             new_data = self.indexWidget(self.tmodel.index(row, col)).currentText()
             if col == 6:
                 if new_data == "None":
                     new_data = self.indexWidget(self.tmodel.index(row, 1)).currentText()
+            else:
+                ori_type = self.indexWidget(self.tmodel.index(row, 1)).currentText()
+                ori_type += f"({self.tmodel.index(row,2).data()})" if self.tmodel.index(row,2).data() else ""
+                if new_data == "YES":
+                    new_data = f"{ori_type} NULL"
+                else:
+                    new_data = f"{ori_type} NOT NULL"
         else:
             self.tmodel.itemChanged.disconnect()
             new_data = self.indexWidget(self.tmodel.index(row, col)).currentText()
@@ -159,9 +191,29 @@ class InfoTable(BaseTable):
         data.append(new_data)
         flag, msg = self.handle.alter(db=self.info["db"], tb=self.info["tb"], data=data, mode=col2desc[col])
         if flag:
-            pass
+            self.parent.fresh_data()
+            self.parent.fresh_widgets()
         else:
             QtWidgets.QMessageBox.warning(self.parent, "ERROR", msg)
+            self.parent.fresh_info()
+
+    def _inside_check_changed(self, btn):
+        row, col = btn.index
+        assert col == 4
+        col2desc = {0: "field", 1: "type", 2: "type", 3: "isnull", 4: "key", 5: "default", 6: "extra"}
+        new_data = ""
+        for row, button in enumerate(self.pri_group.buttons()):
+            if button.checkState() in [1, 2]:
+                new_data += f"`{self.tmodel.index(row, 0).data()}`, "
+        data = [self.labels[row], new_data[:-2]]
+
+        flag, msg = self.handle.alter(db=self.info["db"], tb=self.info["tb"], data=data, mode=col2desc[col])
+        if flag:
+            self.parent.fresh_data()
+            self.parent.fresh_widgets()
+        else:
+            QtWidgets.QMessageBox.warning(self.parent, "ERROR", msg)
+            self.parent.fresh_info()
 
     def delete_row(self):
         try:
@@ -198,7 +250,7 @@ class DataTable(BaseTable):
 
         for row in range(len(data)):
             for col in range(self.info["sum"]):
-                item = QtGui.QStandardItem(str(data[row][col]))
+                item = DataItem(data=str(data[row][col]), info=self.info[col])
                 item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
                 self.tmodel.setItem(row, col, item)
 
@@ -212,15 +264,18 @@ class DataTable(BaseTable):
         if flag:
             pass
         else:
+            self.tmodel.itemChanged.disconnect()
             QtWidgets.QMessageBox.warning(self.parent, "ERROR", msg)
+            self.parent.fresh_data()
+            self.tmodel.itemChanged.connect(self._item_changed)
 
     def _prepare_mapper(self, row: int):
         data = [self.not_pkeys, []]
         pkey = [self.pkeys, []]
         for c in range(self.info["sum"]):
             label = self.tmodel.horizontalHeaderItem(c).text()
-            item = self.tmodel.index(row, c).data()
-            if item == "None":
+            item = self.tmodel.item(row, c).export_data()
+            if item == "'None'":
                 item = "null"
 
             if label in data[0]:
@@ -239,7 +294,8 @@ class DataTable(BaseTable):
                 ans = str(previous + 1)
             else:
                 ans = data[i]
-            item = QtGui.QStandardItem(ans)
+
+            item = DataItem(data=ans, info=self.info[i])
             item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
             self.tmodel.setItem(row_idx, i, item)
 
@@ -330,9 +386,43 @@ class ModifyWindow(QtWidgets.QMainWindow):
         h_layout_2.setStretch(0, 9)
         h_layout_2.setStretch(1, 1)
 
+        h_layout_3 = QtWidgets.QHBoxLayout()
+
+        search_label = QtWidgets.QLabel("搜索功能 ==> ")
+        self.search_col_box = QtWidgets.QComboBox()
+        labels = self.data_table.labels
+        labels.insert(0, "-- 请选择需要查询的列 --")
+        self.search_col_box.addItems(labels)
+        self.search_content_text = QtWidgets.QLineEdit()
+        self.search_content_text.setPlaceholderText("Enter search text")
+        self.limit_text = QtWidgets.QLineEdit()
+        self.limit_text.setText("10")
+        search_btn = QtWidgets.QPushButton("查询")
+        search_btn.clicked.connect(self._search_func)
+        self.search_res_box = QtWidgets.QComboBox()
+        self.search_res_box.addItems(["-- 结果 --"])
+        self.search_res_box.currentIndexChanged.connect(self._search_combo_changed)
+
+        h_layout_3.addWidget(search_label)
+        h_layout_3.addWidget(self.search_col_box)
+        h_layout_3.addWidget(self.search_content_text)
+        h_layout_3.addWidget(self.limit_text)
+        h_layout_3.addWidget(search_btn)
+        h_layout_3.addWidget(self.search_res_box)
+        h_layout_3.addWidget(QtWidgets.QLabel())
+
+        h_layout_3.setStretch(0, 1)
+        h_layout_3.setStretch(1, 2)
+        h_layout_3.setStretch(2, 2)
+        h_layout_3.setStretch(3, 1)
+        h_layout_3.setStretch(4, 1)
+        h_layout_3.setStretch(5, 1)
+        h_layout_3.setStretch(6, 1)
+
         v_layout_all.addLayout(h_layout_1)
+        v_layout_all.addLayout(h_layout_3)
         v_layout_all.addLayout(h_layout_2)
-        v_layout_all.setSpacing(20)
+        v_layout_all.setSpacing(10)
         v_layout_all.setContentsMargins(30, 20, 30, 20)
 
         widget.setLayout(v_layout_all)
@@ -351,12 +441,24 @@ class ModifyWindow(QtWidgets.QMainWindow):
         self.data_table.init_table(info=self.info, data=new_all_item)
         self.data_table.scrollToTop()
 
+    def fresh_widgets(self):
+        labels = self.data_table.labels
+        self.search_col_box.clear()
+        labels.insert(0, "-- 请选择需要查询的列 --")
+        self.search_col_box.addItems(labels)
+
+        self.search_res_box.currentIndexChanged.disconnect()
+        self.search_res_box.clear()
+        self.search_res_box.addItems(["-- 结果 -- "])
+        self.search_res_box.currentIndexChanged.connect(self._search_combo_changed)
+
     def add_info(self):
         now_idx, now_label = self.info_table.insert_row()
         flag, msg = self.handle.alter_insert(db=self.db, tb=self.tb, now_idx=now_idx, now_label=now_label)
         if flag:
             self.fresh_info()
             self.fresh_data()
+            self.fresh_widgets()
             self.info_table.scrollTo(self.info_table.tmodel.index(now_idx + 1, 0))
         else:
             QtWidgets.QMessageBox.warning(self, "ERROR", msg)
@@ -369,6 +471,7 @@ class ModifyWindow(QtWidgets.QMainWindow):
             self.data_table.scrollToBottom()
         else:
             QtWidgets.QMessageBox.warning(self, "ERROR", msg)
+            self.fresh_data()
 
     def delete_info(self):
         field = self.info_table.delete_row()
@@ -376,6 +479,7 @@ class ModifyWindow(QtWidgets.QMainWindow):
         if flag:
             self.fresh_info()
             self.fresh_data()
+            self.fresh_info()
             self.info_table.scrollToTop()
         else:
             QtWidgets.QMessageBox.warning(self, "ERROR", msg)
@@ -387,3 +491,39 @@ class ModifyWindow(QtWidgets.QMainWindow):
             pass
         else:
             QtWidgets.QMessageBox.warning(self, "ERROR", msg)
+
+    def _search_func(self):
+        inp = self.search_content_text.text()
+        col_name = self.search_col_box.currentText()
+        limit = self.limit_text.text()
+        res = []
+        assert int(limit) == float(limit), QtWidgets.QMessageBox.warning(self, "ERROR", "最大展示数目需为整数")
+
+        col = -1
+        for i in range(self.info["sum"]):
+            if self.info[i]["field"] == col_name:
+                col = i
+                break
+
+        row_max = self.data_table.tmodel.rowCount()
+        for row in range(row_max):
+            data = self.data_table.tmodel.index(row, col).data()
+            score = item_search(inp=inp, data=data)
+            if score >= 75:
+                res.append((row, score))
+        res.sort(key=lambda x: x[-1], reverse=True)
+        if len(res) > int(limit):
+            res = res[:int(limit)]
+
+        self.search_res_box.currentIndexChanged.disconnect()
+        self.search_res_box.clear()
+        res = [str(row) for row, _ in res]
+        res.insert(0, "-- 结果 --")
+        self.search_res_box.addItems(res)
+        self.search_res_box.currentIndexChanged.connect(self._search_combo_changed)
+
+    def _search_combo_changed(self, index):
+        if index == 0:
+            pass
+        else:
+            self.data_table.scrollTo(self.data_table.tmodel.index(int(self.search_res_box.currentText()), 0))
