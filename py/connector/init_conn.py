@@ -1,4 +1,3 @@
-import pymysql as ms
 from .mapper import *
 
 
@@ -33,22 +32,9 @@ class SqlConn:
         self.__get_all_databases()
         self.__get_all_tables()
 
-    def get_info(self, db, tb) -> dict:
-        items = ["field", "type", "isnull", "key", "default", "extra"]
-        info = dict()
-        sql = "SHOW COLUMNS FROM `{}`.`{}`".format(db, tb)
-        resp = self.cursor.execute(sql)
-        res = self.cursor.fetchall()
-
-        for n in range(len(res)):
-            info[n] = dict()
-            for i in range(len(items)):
-                info[n][items[i]] = res[n][i]
-        info["sum"] = len(res)
-        info["tb"] = tb
-        info["db"] = db
-
-        return info
+    def select_info(self, db, tb) -> dict:
+        flag, res = select_info_mode(cursor=self.cursor, db=db, tb=tb)
+        return res
 
     def select_all(self, db, tb):
         flag, res = select_all_mode(cursor=self.cursor, db=db, tb=tb)
@@ -74,12 +60,21 @@ class SqlConn:
         return flag, msg
 
     def alter_insert(self, db: str, tb: str, now_idx: int, now_label: str):
-        flag, msg = alter_insert_mode(conn=self.db, cursor=self.cursor, db=db, tb=tb, now_idx=now_idx, now_label=now_label)
+        flag, msg = alter_insert_mode(conn=self.db, cursor=self.cursor, db=db, tb=tb, now_idx=now_idx,
+                                      now_label=now_label)
         return flag, msg
 
     def alter(self, db: str, tb: str, data: list, mode: str):
         flag, msg = alter_mode(conn=self.db, cursor=self.cursor, db=db, tb=tb, data=data, mode=mode)
         return flag, msg
+
+    def increment_reorder(self, db: str, tb: str, field: str):
+        flag, msg = increment_reorder_mode(conn=self.db, cursor=self.cursor, db=db, tb=tb, field=field)
+        return flag, msg
+
+    def arbitrary(self, sen_part: list):
+        flag, msg, mode = arbitrary_mode(conn=self.db, cursor=self.cursor, sen_part=sen_part)
+        return flag, msg, mode
 
     def close(self):
         self.cursor.close()

@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 
 from connector.init_conn import SqlConn
 from connector.utils import *
-from connector.base_widget import ItemCombo, DataItem, PriCheckGroup, PriCheck
+from connector.base_widget import *
 import connector.type_enum as te
 
 
@@ -177,7 +177,7 @@ class InfoTable(BaseTable):
                     new_data = self.indexWidget(self.tmodel.index(row, 1)).currentText()
             else:
                 ori_type = self.indexWidget(self.tmodel.index(row, 1)).currentText()
-                ori_type += f"({self.tmodel.index(row,2).data()})" if self.tmodel.index(row,2).data() else ""
+                ori_type += f"({self.tmodel.index(row, 2).data()})" if self.tmodel.index(row, 2).data() else ""
                 if new_data == "YES":
                     new_data = f"{ori_type} NULL"
                 else:
@@ -314,6 +314,7 @@ class ModifyWindow(QtWidgets.QMainWindow):
     def __init__(self, handle: SqlConn, db: str, tb: str):
         super(ModifyWindow, self).__init__()
         self.resize(1280, 800)
+        self.setWindowTitle(f"Now check => {db}.{tb}")
         self._center()
 
         self.handle = handle
@@ -323,10 +324,14 @@ class ModifyWindow(QtWidgets.QMainWindow):
 
         self.info_table = InfoTable(handle=self.handle, parent=self)
         self.data_table = DataTable(handle=self.handle, parent=self)
+        self.sql_editor = QTextEditWithLineNum()
+
+        self.menu = self.menuBar()
 
         self._center()
         self._init_table()
         self._init_gui()
+        self._init_menu()
 
     def _center(self):
         screen = QtWidgets.QDesktopWidget().screenGeometry()
@@ -334,14 +339,30 @@ class ModifyWindow(QtWidgets.QMainWindow):
         self.move((screen.width() - size.width()) // 2, ((screen.height() - size.height()) // 2) - 50)
 
     def _init_table(self):
-        self.info = self.handle.get_info(db=self.db, tb=self.tb)
+        self.info = self.handle.select_info(db=self.db, tb=self.tb)
         all_item = self.handle.select_all(db=self.db, tb=self.tb)
 
         self.info_table.init_table(info=self.info)
         self.data_table.init_table(info=self.info, data=all_item)
 
     def _init_gui(self):
-        widget = QtWidgets.QWidget()
+        self.all_tab = QtWidgets.QTabWidget()
+
+        self.general_tab = QtWidgets.QWidget()
+        self.customized_tab = QtWidgets.QWidget()
+        self.relation_tab = QtWidgets.QWidget()
+
+        self.all_tab.addTab(self.general_tab, "总览")
+        self.all_tab.addTab(self.customized_tab, "语句视图")
+        self.all_tab.addTab(self.relation_tab, "关系视图")
+
+        self._init_tab1()
+        self._init_tab2()
+        self._init_tab3()
+
+        self.setCentralWidget(self.all_tab)
+
+    def _init_tab1(self):
         v_layout_all = QtWidgets.QVBoxLayout()
 
         h_layout_1 = QtWidgets.QHBoxLayout()
@@ -425,12 +446,40 @@ class ModifyWindow(QtWidgets.QMainWindow):
         v_layout_all.setSpacing(10)
         v_layout_all.setContentsMargins(30, 20, 30, 20)
 
-        widget.setLayout(v_layout_all)
-        self.setCentralWidget(widget)
+        self.general_tab.setLayout(v_layout_all)
+
+    def _init_tab2(self):
+        v_layout = QtWidgets.QVBoxLayout()
+        h_layout = QtWidgets.QHBoxLayout()
+
+        exec_btn = QtWidgets.QPushButton("执行")
+        exec_btn.clicked.connect(self._sql_execute)
+        clear_btn = QtWidgets.QPushButton("清空")
+        clear_btn.clicked.connect(self._clear_sentence)
+        h_layout.addWidget(exec_btn)
+        h_layout.addWidget(clear_btn)
+
+        v_layout.addWidget(self.sql_editor)
+        v_layout.addLayout(h_layout)
+
+        self.customized_tab.setLayout(v_layout)
+
+    def _init_tab3(self):
+        pass
+
+    def _init_menu(self):
+        quick = self.menu.addMenu("快捷")
+        about = self.menu.addMenu("关于")
+
+        rik = QtWidgets.QAction("Re-order increment key", self)
+        rik.triggered.connect(self._pri_increment_reorder)
+        quick.addAction(rik)
+
+        about.addAction(QtWidgets.QAction("Help", self))
+        about.addAction(QtWidgets.QAction("Version", self))
 
     def fresh_info(self):
-        new_info = self.handle.get_info(db=self.db, tb=self.tb)
-        self.info = new_info
+        self.info = self.handle.select_info(db=self.db, tb=self.tb)
         self.info_table.tmodel = QtGui.QStandardItemModel()
         self.info_table.init_table(info=self.info)
         self.info_table.scrollToTop()
@@ -488,7 +537,7 @@ class ModifyWindow(QtWidgets.QMainWindow):
         data, pkey = self.data_table.delete_row()
         flag, msg = self.handle.delete(db=self.db, tb=self.tb, pkey=pkey)
         if flag:
-            pass
+            self.fresh_data()
         else:
             QtWidgets.QMessageBox.warning(self, "ERROR", msg)
 
@@ -527,3 +576,38 @@ class ModifyWindow(QtWidgets.QMainWindow):
             pass
         else:
             self.data_table.scrollTo(self.data_table.tmodel.index(int(self.search_res_box.currentText()), 0))
+
+    def _pri_increment_reorder(self):
+        row_idx = -1
+        for i in range(self.info["sum"]):
+            if self.info[i]["extra"] == "auto_increment":
+                row_idx = i
+        if row_idx == -1:
+            QtWidgets.QMessageBox.information(self, "Notice", "该表没有自增字段")
+            return
+
+        flag, msg = self.handle.increment_reorder(db=self.db, tb=self.tb, field=self.info[row_idx]['field'])
+        if flag:
+            self.fresh_info()
+            self.fresh_data()
+        else:
+            QtWidgets.QMessageBox.warning(self, "ERROR", msg)
+
+    def _sql_execute(self):
+        sentence = self.sql_editor.toPlainText()
+        sen_part = split_sql_sentence(sentence=sentence)
+        flag, msg, mode = self.handle.arbitrary(sen_part=sen_part)
+
+        if mode == "info":
+            self.fresh_info()
+            self.fresh_data()
+        elif mode == "data":
+            self.fresh_data()
+
+        if flag:
+            pass
+        else:
+            QtWidgets.QMessageBox.warning(self, "ERROR", msg)
+
+    def _clear_sentence(self):
+        self.sql_editor.clear()

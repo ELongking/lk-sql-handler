@@ -13,7 +13,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.handle = None
 
-        self.setWindowTitle("Custom Mysql")
+        self.setWindowTitle("lk-sql-handler; Python version")
         self.resize(800, 600)
         self._center()
 
@@ -138,6 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if db != "---" and tb:
             self.mw = ModifyWindow(handle=self.handle, db=db, tb=tb)
             self.mw.show()
+            self.showMinimized()
         else:
             QtWidgets.QMessageBox.warning(self, "ERROR", "请选择符合要求的数据库和表名")
 

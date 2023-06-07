@@ -78,6 +78,27 @@ def alter_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, da
         return False, trans_error(e)[1]
 
 
+def select_info_mode(cursor: ms.connect.cursor, db: str, tb: str):
+    items = ["field", "type", "isnull", "key", "default", "extra"]
+    info = dict()
+    sql = "SHOW COLUMNS FROM `{}`.`{}`".format(db, tb)
+    logger.info(f"sql sentence => {sql}")
+    try:
+        cursor.execute(sql)
+        res = cursor.fetchall()
+        for n in range(len(res)):
+            info[n] = dict()
+            for i in range(len(items)):
+                info[n][items[i]] = res[n][i]
+        info["sum"] = len(res)
+        info["tb"] = tb
+        info["db"] = db
+        return True, info
+    except MySQLError as e:
+        logger.warning(e)
+        return False, trans_error(e)[1]
+
+
 def select_all_mode(cursor: ms.connect.cursor, db: str, tb: str):
     sql = f"SELECT * FROM `{db}`.`{tb}`"
     logger.info(f"sql sentence => {sql}")
@@ -152,3 +173,45 @@ def alter_delete_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: 
     except MySQLError as e:
         logger.error(e)
         return False, trans_error(e)[1]
+
+
+def increment_reorder_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, field: str):
+    try:
+        sql = f"ALTER TABLE tafang.info DROP `{field}`"
+        logger.info(f"sql sentence => {sql}")
+        cursor.execute(sql)
+        conn.commit()
+        try:
+            sql = f"ALTER TABLE `{db}`.`{tb}` ADD `{field}` int(10) PRIMARY KEY NOT NULL AUTO_INCREMENT FIRST"
+            logger.info(f"sql sentence => {sql}")
+            cursor.execute(sql)
+            conn.commit()
+        except MySQLError as e:
+            logger.error(e)
+            return False, trans_error(e)[1]
+    except MySQLError as e:
+        logger.error(e)
+        return False, trans_error(e)[1]
+
+    return True, ""
+
+
+def arbitrary_mode(conn: ms.connect, cursor: ms.connect.cursor, sen_part: list):
+    mode, select = "", dict()
+    for sentence in sen_part:
+        try:
+            logger.info(f"CUSTOMIZED sql sentence => {sentence}")
+            cursor.execute(sentence)
+            res = cursor.fetchall()
+            print(res)
+            conn.commit()
+        except MySQLError as e:
+            logger.error(e)
+            return False, trans_error(e)[1], mode
+
+        if sentence.lower().startswith("alter"):
+            mode = "info"
+        elif (sentence.lower().startswith("insert") or sentence.lower().startswith("delete")) and mode == "":
+            mode = "data"
+
+    return True, "", mode
