@@ -1,3 +1,0 @@
-2023-06-06 17:24:15.906 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
-2023-06-06 17:24:15.908 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-06 17:24:15 -------------
-2023-06-06 17:24:22.252 | INFO     | connector.mapper:select_all_mode:83 - sql sentence => SELECT * FROM `draft`.`album`
