@@ -1,0 +1,104 @@
+2023-06-08 12:53:54.273 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 12:53:54.274 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 12:53:54 -------------
+2023-06-08 12:53:57.845 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 12:53:57.848 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 12:54:01.236 | INFO     | connector.mapper:insert_mode:124 - sql sentence => INSERT INTO `tafang`.`info` (`name`, `adv-desc`, `disadv-desc`, `atk`, `sup`, `func`, `minNum`, `allScore`, `id`) VALUES ('null', 'null', 'null', null, null, null, 3, 0, 172)
+2023-06-08 12:54:07.939 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 12:54:15.070 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 12:54:16.766 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 12:54:17.851 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 12:56:10.740 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 12:56:25.753 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 12:57:52.316 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 12:57:52.317 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 12:57:52 -------------
+2023-06-08 12:57:56.106 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 12:57:56.107 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:06:40.059 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=None, `sup`=None, `func`=None, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:06:40.060 | ERROR    | connector.mapper:update_mode:147 - (1054, "Unknown column 'None' in 'field list'")
+2023-06-08 13:06:43.447 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:06:54.332 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=None, `sup`=None, `func`=None, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:06:54.333 | ERROR    | connector.mapper:update_mode:147 - (1054, "Unknown column 'None' in 'field list'")
+2023-06-08 13:06:58.032 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:07:35.660 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:07:35.661 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:07:35 -------------
+2023-06-08 13:07:38.524 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `draft`.`album`
+2023-06-08 13:07:38.526 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:07:42.584 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:07:42.585 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:07:47.345 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=None, `sup`=None, `func`=None, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:07:47.346 | ERROR    | connector.mapper:update_mode:147 - (1054, "Unknown column 'None' in 'field list'")
+2023-06-08 13:07:47.970 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:08:31.130 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:08:31.131 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:08:31 -------------
+2023-06-08 13:08:35.637 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:08:35.638 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:08:38.948 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:15:02.357 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:16:44.358 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:16:44.359 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:16:44 -------------
+2023-06-08 13:16:49.685 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:16:49.687 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:16:52.323 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:16:52.326 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='null', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:17:40.413 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:17:40.414 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:17:40 -------------
+2023-06-08 13:17:43.594 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:17:43.595 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:17:59.861 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:17:59.862 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:17:59 -------------
+2023-06-08 13:18:03.595 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `draft`.`album`
+2023-06-08 13:18:03.597 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:19:26.290 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:19:26.292 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:19:26 -------------
+2023-06-08 13:19:29.639 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:19:29.641 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:19:29 -------------
+2023-06-08 13:19:30.448 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:19:30.463 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:19:30 -------------
+2023-06-08 13:19:35.926 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:19:35.929 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:21:02.040 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:21:02.041 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:21:02 -------------
+2023-06-08 13:21:04.657 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:21:04.660 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:23:27.135 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:23:27.137 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:23:27 -------------
+2023-06-08 13:23:30.024 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `draft`.`album`
+2023-06-08 13:23:30.027 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:23:31.864 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `draft`.`album` SET `id`='None', `666`='<connector.base_widget.DataItem object at 0x000002ADC76BFA60>', `123`=null, `title`='456', `genre`='None', `score`=5.0 WHERE `artist`='123'
+2023-06-08 13:23:31.867 | ERROR    | connector.mapper:update_mode:147 - (1406, "Data too long for column '666' at row 1")
+2023-06-08 13:23:38.305 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:24:17.530 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:24:17.531 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:24:17 -------------
+2023-06-08 13:24:19.574 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `draft`.`album`
+2023-06-08 13:24:19.577 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:24:35.284 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:24:35.286 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:24:35 -------------
+2023-06-08 13:24:38.746 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `draft`.`album`
+2023-06-08 13:24:38.749 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:24:44.130 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `draft`.`album` SET `id`='None', `666`='sss', `123`=null, `title`='456', `genre`='None', `score`=5.0 WHERE `artist`='123'
+2023-06-08 13:25:13.798 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:25:13.799 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:25:13 -------------
+2023-06-08 13:25:17.283 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `draft`.`album`
+2023-06-08 13:25:17.285 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `draft`.`album`
+2023-06-08 13:25:21.346 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `draft`.`album` SET `id`='None', `666`='12ddd', `123`=null, `title`='456', `genre`='None', `score`=5.0 WHERE `artist`='123'
+2023-06-08 13:25:37.347 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:25:37.349 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:25:37 -------------
+2023-06-08 13:26:19.042 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 13:26:19.044 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 13:26:19 -------------
+2023-06-08 13:26:21.931 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 13:26:21.932 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 13:26:35.737 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='实-起许劭', `adv-desc`='null', `disadv-desc`='null', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:27:17.647 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='实-起许劭', `adv-desc`='null', `disadv-desc`='伪三血无防; ', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:27:25.388 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='2轮-实-起许劭', `adv-desc`='null', `disadv-desc`='伪三血无防; ', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:27:59.369 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='2轮-实-起许劭', `adv-desc`='开局8访客; 可多次用相同技能; 灵活', `disadv-desc`='伪三血无防; ', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:28:30.253 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='2轮-实-起许劭', `adv-desc`='开局8访客; 可多次用相同技能; 灵活', `disadv-desc`='伪三血无防; 用一次即需舍弃; 随机访客不稳定', `atk`=null, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:28:32.480 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='2轮-实-起许劭', `adv-desc`='开局8访客; 可多次用相同技能; 灵活', `disadv-desc`='伪三血无防; 用一次即需舍弃; 随机访客不稳定', `atk`=1, `sup`=null, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:28:33.243 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='2轮-实-起许劭', `adv-desc`='开局8访客; 可多次用相同技能; 灵活', `disadv-desc`='伪三血无防; 用一次即需舍弃; 随机访客不稳定', `atk`=1, `sup`=1, `func`=null, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 13:28:33.645 | INFO     | connector.mapper:update_mode:141 - sql sentence => UPDATE `tafang`.`info` SET `name`='2轮-实-起许劭', `adv-desc`='开局8访客; 可多次用相同技能; 灵活', `disadv-desc`='伪三血无防; 用一次即需舍弃; 随机访客不稳定', `atk`=1, `sup`=1, `func`=1, `minNum`=3, `allScore`=0 WHERE `id`=172
+2023-06-08 14:01:59.582 | INFO     | connector.mapper:<module>:10 - ------------------------- Start -------------------------
+2023-06-08 14:01:59.584 | INFO     | connector.mapper:<module>:11 - ------------- OpenTime: 2023-06-08 14:01:59 -------------
+2023-06-08 14:02:03.672 | INFO     | connector.mapper:select_info_mode:85 - sql sentence => SHOW COLUMNS FROM `tafang`.`info`
+2023-06-08 14:02:03.675 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`
+2023-06-08 14:02:06.758 | INFO     | connector.mapper:insert_mode:124 - sql sentence => INSERT INTO `tafang`.`info` (`name`, `adv-desc`, `disadv-desc`, `atk`, `sup`, `func`, `minNum`, `allScore`, `id`) VALUES ('null', 'null', 'null', null, null, null, 3, 0, 173)
+2023-06-08 14:02:10.040 | INFO     | connector.mapper:delete_mode:156 - sql sentence => DELETE FROM `tafang`.`info` WHERE `id`=173
+2023-06-08 14:02:10.043 | INFO     | connector.mapper:select_all_mode:104 - sql sentence => SELECT * FROM `tafang`.`info`

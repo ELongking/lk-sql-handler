@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <Label layoutX="101.0" layoutY="37.0" prefHeight="20.0" prefWidth="50.0" text="Url:" />
+                  <TextField fx:id="url_text" layoutX="296.0" layoutY="32.0" prefHeight="30.0" prefWidth="126.0" text="localhost" />
+                  <Label layoutX="101.0" layoutY="75.0" prefHeight="20.0" prefWidth="90.0" text="Username:" />
+                  <TextField fx:id="username_text" layoutX="296.0" layoutY="70.0" text="root" />
+                  <Label layoutX="101.0" layoutY="112.0" prefHeight="20.0" prefWidth="90.0" text="Password:" />
+                  <TextField fx:id="pwd_text" layoutX="296.0" layoutY="107.0" text="19980917" />
+                  <Button layoutX="166.0" layoutY="155.0" mnemonicParsing="false" onAction="#loginClick" text="登录" />
+                  <Button layoutX="372.0" layoutY="155.0" mnemonicParsing="false" onAction="#resetClick" text="重置" />
+                  <TextField fx:id="port_text" layoutX="431.0" layoutY="32.0" prefHeight="30.0" prefWidth="67.0" text="3306" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <ComboBox fx:id="database_box" layoutX="78.0" layoutY="83.0" prefWidth="150.0" />
+                  <Label layoutX="120.0" layoutY="43.0" text="Database" />
+                  <ComboBox fx:id="table_box" layoutX="354.0" layoutY="83.0" prefWidth="150.0" />
+                  <Label layoutX="410.0" layoutY="43.0" text="Table" />
+                  <Button layoutX="274.0" layoutY="138.0" mnemonicParsing="false" onAction="#openModify" text="进入" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

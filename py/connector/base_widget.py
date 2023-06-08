@@ -16,7 +16,7 @@ class DataItem(QStandardItem):
         self.setText(self.data)
 
     def set_data(self, data):
-        self.setText(data)
+        self.data = data
 
     def export_data(self):
         res = self.data

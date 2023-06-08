@@ -20,7 +20,7 @@ def set_default_item(item: dict):
         if isnull == "YES":
             res = default
         else:
-            res = "None"
+            res = "null"
 
     return res
 

@@ -121,7 +121,6 @@ class InfoTable(BaseTable):
             new_data += f" {_type}"
 
             _isnull = self.indexWidget(self.tmodel.index(row, 3)).currentText()
-            print(_isnull)
             if _isnull == "YES":
                 _isnull = "NULL"
             else:
@@ -259,6 +258,7 @@ class DataTable(BaseTable):
 
     def _item_changed(self, item):
         row, col = item.row(), item.column()
+        item.set_data(self.tmodel.index(row, col).data())
         data, pkey = self._prepare_mapper(row=row)
         flag, msg = self.handle.update(db=self.info["db"], tb=self.info["tb"], pkey=pkey, data=data)
         if flag:
@@ -275,7 +275,7 @@ class DataTable(BaseTable):
         for c in range(self.info["sum"]):
             label = self.tmodel.horizontalHeaderItem(c).text()
             item = self.tmodel.item(row, c).export_data()
-            if item == "'None'":
+            if item == "None":
                 item = "null"
 
             if label in data[0]:

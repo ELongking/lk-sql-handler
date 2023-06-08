@@ -107,8 +107,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.handle:
             self.handle.close()
 
-        host, username, password = self.host_text.text(), self.username_text.text(), self.pwd_text.text()
-        self.handle = SqlConn(host=host, user=username, pwd=password)
+        try:
+            host, username, password = self.host_text.text(), self.username_text.text(), self.pwd_text.text()
+            self.handle = SqlConn(host=host, user=username, pwd=password)
+        except:
+            QtWidgets.QMessageBox.warning(self, "ERROR", "登陆失败")
+            return
 
         self.database_box.setEnabled(True)
         self.table_box.setEnabled(True)
@@ -144,8 +148,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         print("CLOSE")
-        if self.handle:
+        try:
             self.handle.close()
+        except:
+            pass
 
 
 if __name__ == '__main__':
