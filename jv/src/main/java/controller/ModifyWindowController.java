@@ -5,8 +5,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -59,12 +61,23 @@ public class ModifyWindowController {
 
         List<Map<String, Object>> allInfo = InfoMapper.getAllInfo(sqlHandler, db, tb);
         Map<String, Object> singleInfo = allInfo.get(0);
-        for (String key : singleInfo.keySet()) {
-            info_table.getColumns().add(new TableColumn<>(key));
-        }
 
-        ObservableList<Map<String, Object>> observableAllInfo = FXCollections.observableArrayList(allInfo);
-        data_table.setItems(observableAllInfo);
+        for (Map<String, Object> item : allInfo) {
+            info_table.getItems().add(item);
+        }
+        for (String key : singleInfo.keySet()) {
+            TableColumn<Map<String, Object>, Object> newCol = new TableColumn<>(key);
+            if (key.equals("COLUMN_KEY")){
+                newCol.setCellFactory(ComboBoxTableCell.forTableColumn("PRI", "None"));
+            } else if (key.equals("EXTRA")){
+                newCol.setCellFactory(ComboBoxTableCell.forTableColumn("PRI", "None"));
+            }
+            else {
+                newCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().get(key)));
+                info_table.getColumns().add(newCol);
+            }
+
+        }
     }
 
     public void freshData() throws Exception {
@@ -83,5 +96,21 @@ public class ModifyWindowController {
             data_table.getColumns().add(newCol);
         }
     }
+
+    public void addData() {
+    }
+
+    public void deleteData(){
+        int focusedIndex = data_table.getFocusModel().getFocusedIndex();
+        if (focusedIndex == -1) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("ERROR");
+            alert.setContentText("未选择所需要删除的行, 请重试");
+        } else {
+
+        }
+
+    }
+
 
 }

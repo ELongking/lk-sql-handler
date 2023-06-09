@@ -203,7 +203,6 @@ def arbitrary_mode(conn: ms.connect, cursor: ms.connect.cursor, sen_part: list):
             logger.info(f"CUSTOMIZED sql sentence => {sentence}")
             cursor.execute(sentence)
             res = cursor.fetchall()
-            print(res)
             conn.commit()
         except MySQLError as e:
             logger.error(e)

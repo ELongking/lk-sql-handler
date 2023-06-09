@@ -14,7 +14,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mysql.version>8.0.32</mysql.version>
         <lombok.version>1.18.24</lombok.version>
-        <beanutils.version>1.9.4</beanutils.version>
     </properties>
 
 
@@ -33,9 +32,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>${beanutils.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.20.0</version>
         </dependency>
 
     </dependencies>

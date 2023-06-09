@@ -43,9 +43,9 @@
                               </TableView>
                               <VBox prefHeight="200.0" prefWidth="100.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="刷新" />
-                                    <Button mnemonicParsing="false" text="添加" />
-                                    <Button mnemonicParsing="false" text="删除" />
+                                    <Button mnemonicParsing="false" onAction="#freshData" text="刷新" />
+                                    <Button mnemonicParsing="false" onAction="#addData" text="添加" />
+                                    <Button mnemonicParsing="false" onAction="#deleteData" text="删除" />
                                  </children>
                               </VBox>
                            </children>

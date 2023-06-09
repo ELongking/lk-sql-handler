@@ -47,10 +47,9 @@ class InfoTable(BaseTable):
                     if col == 1:
                         ans_box = ItemCombo(func=self._inside_combo_changed, index=(row, col), items=type_items)
                         if "(" in value:
-                            length = value[value.index("(") + 1: -1]
-                            value = value[:value.index("(")]
+                            length = value[value.index("(") + 1: value.index(")")]
+                            value = value[:value.index("(")] + value[:value.index(")") + 1: ]
                             assert int(length) * 0 == 0
-                            assert value in type_items
                         else:
                             length = ""
                         ans_box.setCurrentText(value)

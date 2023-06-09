@@ -1,15 +1,15 @@
 TINYINT = {"name": "tinyint", "type": "int", "range": (-8, 8)}
-TINYINT_UNSIGNED = {"name": "tinyint_unsigned", "type": "int", "range": (0, 9)}
+TINYINT_UNSIGNED = {"name": "tinyint unsigned", "type": "int", "range": (0, 9)}
 SMALLINT = {"name": "smallint", "type": "int", "range": (-16, 16)}
-SMALLINT_UNSIGNED = {"name": "smallint_unsigned", "type": "int", "range": (0, 17)}
+SMALLINT_UNSIGNED = {"name": "smallint unsigned", "type": "int", "range": (0, 17)}
 MEDIUMINT = {"name": "mediumint", "type": "int", "range": (-24, 24)}
-MEDIUMINT_UNSIGNED = {"name": "mediumint_unsigned", "type": "int", "range": (0, 25)}
+MEDIUMINT_UNSIGNED = {"name": "mediumint unsigned", "type": "int", "range": (0, 25)}
 INT = {"name": "int", "type": "int", "range": (-32, 32)}
-INT_UNSIGNED = {"name": "int_unsigned", "type": "int", "range": (0, 33)}
+INT_UNSIGNED = {"name": "int unsigned", "type": "int", "range": (0, 33)}
 FLOAT = {"name": "float", "type": "float", "range": (-128, 128)}
-FLOAT_UNSIGNED = {"name": "float_unsigned", "type": "float", "range": (0, 128)}
+FLOAT_UNSIGNED = {"name": "float unsigned", "type": "float", "range": (0, 128)}
 DOUBLE = {"name": "double", "type": "float", "range": (-1024, 1024)}
-DOUBLE_UNSIGNED = {"name": "double_unsigned", "type": "float", "range": (0, 1024)}
+DOUBLE_UNSIGNED = {"name": "double unsigned", "type": "float", "range": (0, 1024)}
 
 CHAR = {"name": "char", "type": "str", "range": (0, 9)}
 VARCHAR = {"name": "varchar", "type": "str", "range": (0, 17)}

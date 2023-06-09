@@ -6,7 +6,7 @@ import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
 import mapper.GeneralMapper;
 import model.SqlHandler;
-import utils.SqlConfigEditor;
+import utils.SqlEditor;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -69,7 +69,7 @@ public class MainWindowController {
     public void loginClick(ActionEvent e) throws Exception {
         String url = url_text.getText();
         String port = port_text.getText();
-        url = SqlConfigEditor.urlEditor(url, port);
+        url = SqlEditor.urlEditor(url, port);
         String username = username_text.getText();
         String password = pwd_text.getText();
 

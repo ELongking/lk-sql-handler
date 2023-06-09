@@ -1,13 +1,9 @@
 package model;
 
 import lombok.Data;
-import org.apache.commons.beanutils.BeanUtils;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 public class SqlHandler {
@@ -45,7 +41,8 @@ public class SqlHandler {
     public void close() throws SQLException {
         try {
             conn.close();
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
     }
 
 
