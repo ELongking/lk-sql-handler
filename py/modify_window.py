@@ -48,7 +48,7 @@ class InfoTable(BaseTable):
                         ans_box = ItemCombo(func=self._inside_combo_changed, index=(row, col), items=type_items)
                         if "(" in value:
                             length = value[value.index("(") + 1: value.index(")")]
-                            value = value[:value.index("(")] + value[:value.index(")") + 1: ]
+                            value = value[:value.index("(")] + value[value.index(")") + 1:]
                             assert int(length) * 0 == 0
                         else:
                             length = ""
@@ -148,13 +148,14 @@ class InfoTable(BaseTable):
             else:
                 pass
 
-            new_data += " FIRST"
         else:
             new_data = self.tmodel.index(row, col).data()
+
         data.append(new_data)
 
         flag, msg = self.handle.alter(db=self.info["db"], tb=self.info["tb"], data=data, mode=col2desc[col])
         if flag:
+            self.parent.fresh_info()
             self.parent.fresh_data()
             self.parent.fresh_widgets()
         else:
@@ -170,12 +171,12 @@ class InfoTable(BaseTable):
 
         if col in [3, 6]:
             new_data = self.indexWidget(self.tmodel.index(row, col)).currentText()
+            ori_type = self.indexWidget(self.tmodel.index(row, 1)).currentText()
+            ori_type += f"({self.tmodel.index(row, 2).data()})" if self.tmodel.index(row, 2).data() else ""
             if col == 6:
-                if new_data == "None":
-                    new_data = self.indexWidget(self.tmodel.index(row, 1)).currentText()
+                if new_data != "None":
+                    new_data = f"{ori_type} {new_data}"
             else:
-                ori_type = self.indexWidget(self.tmodel.index(row, 1)).currentText()
-                ori_type += f"({self.tmodel.index(row, 2).data()})" if self.tmodel.index(row, 2).data() else ""
                 if new_data == "YES":
                     new_data = f"{ori_type} NULL"
                 else:
@@ -183,12 +184,15 @@ class InfoTable(BaseTable):
         else:
             self.tmodel.itemChanged.disconnect()
             new_data = self.indexWidget(self.tmodel.index(row, col)).currentText()
-            self.tmodel.setItem(row, 2, QtGui.QStandardItem(""))
+            item = QtGui.QStandardItem("")
+            item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+            self.tmodel.setItem(row, 2, item)
             self.tmodel.itemChanged.connect(self._item_changed)
 
         data.append(new_data)
         flag, msg = self.handle.alter(db=self.info["db"], tb=self.info["tb"], data=data, mode=col2desc[col])
         if flag:
+            self.parent.fresh_info()
             self.parent.fresh_data()
             self.parent.fresh_widgets()
         else:
@@ -207,6 +211,7 @@ class InfoTable(BaseTable):
 
         flag, msg = self.handle.alter(db=self.info["db"], tb=self.info["tb"], data=data, mode=col2desc[col])
         if flag:
+            self.parent.fresh_info()
             self.parent.fresh_data()
             self.parent.fresh_widgets()
         else:
@@ -595,13 +600,7 @@ class ModifyWindow(QtWidgets.QMainWindow):
     def _sql_execute(self):
         sentence = self.sql_editor.toPlainText()
         sen_part = split_sql_sentence(sentence=sentence)
-        flag, msg, mode = self.handle.arbitrary(sen_part=sen_part)
-
-        if mode == "info":
-            self.fresh_info()
-            self.fresh_data()
-        elif mode == "data":
-            self.fresh_data()
+        flag, msg = self.handle.arbitrary(sen_part=sen_part)
 
         if flag:
             pass

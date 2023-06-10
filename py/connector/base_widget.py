@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QStandardItem, QPainter, QFont
+from PyQt5.QtGui import QStandardItem, QPainter, QFont, QWheelEvent
 from PyQt5.QtCore import Qt, QRect, QSize, QPoint
 from PyQt5.QtWidgets import QTextEdit, QComboBox, QButtonGroup, QCheckBox, QWidget
 from .type_enum import *
@@ -47,6 +47,9 @@ class ItemCombo(QComboBox):
             self.conn_enabled()
         else:
             self.conn_disabled()
+
+    def wheelEvent(self, e: QWheelEvent) -> None:
+        pass
 
     def conn_enabled(self):
         self.currentIndexChanged.connect(self.func)

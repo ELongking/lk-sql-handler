@@ -73,8 +73,8 @@ class SqlConn:
         return flag, msg
 
     def arbitrary(self, sen_part: list):
-        flag, msg, mode = arbitrary_mode(conn=self.db, cursor=self.cursor, sen_part=sen_part)
-        return flag, msg, mode
+        flag, msg = arbitrary_mode(conn=self.db, cursor=self.cursor, sen_part=sen_part)
+        return flag, msg
 
     def close(self):
         self.cursor.close()

@@ -60,12 +60,7 @@ def alter_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str, tb: str, da
             new_data = "null"
         sql = f"ALTER TABLE `{db}`.`{tb}` ALTER COLUMN `{field}` SET DEFAULT {new_data}"
     elif mode == "extra":
-        if new_data == "auto_increment":
-            sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` AUTO_INCREMENT"
-        elif new_data == "on update CURRENT_TIMESTAMP":
-            sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` on update CURRENT_TIMESTAMP"
-        else:
-            sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` {new_data}"
+        sql = f"ALTER TABLE `{db}`.`{tb}` MODIFY COLUMN `{field}` {new_data}"
 
     logger.info(f"sql sentence => {sql}")
 
@@ -182,7 +177,7 @@ def increment_reorder_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str,
         cursor.execute(sql)
         conn.commit()
         try:
-            sql = f"ALTER TABLE `{db}`.`{tb}` ADD `{field}` int(10) PRIMARY KEY NOT NULL AUTO_INCREMENT FIRST"
+            sql = f"ALTER TABLE `{db}`.`{tb}` ADD `{field}` int(10) PRIMARY KEY NOT NULL AUTO_INCREMENT FIRST "
             logger.info(f"sql sentence => {sql}")
             cursor.execute(sql)
             conn.commit()
@@ -197,7 +192,6 @@ def increment_reorder_mode(conn: ms.connect, cursor: ms.connect.cursor, db: str,
 
 
 def arbitrary_mode(conn: ms.connect, cursor: ms.connect.cursor, sen_part: list):
-    mode, select = "", dict()
     for sentence in sen_part:
         try:
             logger.info(f"CUSTOMIZED sql sentence => {sentence}")
@@ -206,11 +200,6 @@ def arbitrary_mode(conn: ms.connect, cursor: ms.connect.cursor, sen_part: list):
             conn.commit()
         except MySQLError as e:
             logger.error(e)
-            return False, trans_error(e)[1], mode
+            return False, trans_error(e)[1]
 
-        if sentence.lower().startswith("alter"):
-            mode = "info"
-        elif (sentence.lower().startswith("insert") or sentence.lower().startswith("delete")) and mode == "":
-            mode = "data"
-
-    return True, "", mode
+    return True, ""
